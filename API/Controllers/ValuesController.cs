@@ -2,29 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace API.Controllers
 {
     //API Controller Root Attribute
     //api/values
-    [Route("api/[Controller]")] 
+    [Route("api/[Controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        
+        private readonly DataContext _context;
+
+        public ValuesController(DataContext context)
+        {
+            _context = context;
+        }
+
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<Value>>> Get()
         {
-            return new string[] {"value1", "value2"};            
+            var values = await _context.Values.ToListAsync();  //context is the object of the database and Values is the object of DbSet or table
+            return Ok(values);
         }
 
         //GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<ActionResult<Value>> Get(int id)
         {
-            return "value";
+            var value = await _context.Values.FindAsync(id);
+            return Ok(value);
         }
 
         //POST api/values
@@ -47,7 +58,7 @@ namespace API.Controllers
         // DELETE api/values/5
         public void Delete(int id)
         {
-            
+
         }
 
 
