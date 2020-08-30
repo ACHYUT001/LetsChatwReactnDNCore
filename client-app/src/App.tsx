@@ -19,7 +19,7 @@ class App extends Component {
       })
       .catch(() => {
         this.setState({
-          values: [{ id: 1, name: "helo" }],
+          values: [{ id: 0 , name: "Error, Could not fetch values" }],
         });
       });
   }
