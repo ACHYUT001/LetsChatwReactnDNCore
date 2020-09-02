@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, SyntheticEvent } from "react";
+import React, { useState, useEffect, Fragment, SyntheticEvent, useContext } from "react";
 import { Container } from "semantic-ui-react";
 import { IActivity } from "../models/activity";
 
@@ -8,7 +8,11 @@ import { ActivityDashboard } from "../../features/activities/dashboard/ActivityD
 import agent from "../api/agent";
 import LoadingComponent from "./LoadingComponent";
 
+import ActivityStore from "../stores/activityStore";
+
 const App = () => {
+
+  const activityStore = useContext(ActivityStore);
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
     null
