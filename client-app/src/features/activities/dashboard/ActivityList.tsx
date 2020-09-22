@@ -1,27 +1,25 @@
-import React, { SyntheticEvent } from "react";
+import { observer } from "mobx-react-lite";
+import React, { useContext } from "react";
 import { Item, Button, Label, Segment } from "semantic-ui-react";
-import { IActivity } from "../../../app/models/activity";
 
-interface IProps {
-  activities: IActivity[];
-  selectActivity: (id: string) => void;
-  deleteActivity: (event: SyntheticEvent<HTMLButtonElement> , id:string) => void;
-  submitting: boolean;
-  target: string;
-}
+import ActivityStore from "../../../app/stores/activityStore";
 
-export const ActivityList: React.FC<IProps> = ({
-  activities,
-  selectActivity,
-  deleteActivity,
-  submitting,
-  target,
-}) => {
+export const ActivityList: React.FC = () => {
+  const activityStore = useContext(ActivityStore);
+  const {
+    activitiesByDate,
+    selectActivity,
+    deleteActivity,
+    submitting,
+    target,
+  } = activityStore;
+
   return (
     <Segment clearing>
       <Item.Group divided>
-        {activities.map((activity) => (
-          <Item key = {activity.id}>
+        {activitiesByDate.map((activity) => (
+          <Item key={activity.id}>
+            {console.log(activity.id)}
             <Item.Content>
               <Item.Header as="a">{activity.title}</Item.Header>
               <Item.Meta>{activity.date}</Item.Meta>
@@ -40,8 +38,8 @@ export const ActivityList: React.FC<IProps> = ({
                 />
                 <Button
                   floated="right"
-                  loading = {target === activity.id && submitting}
-                  name = {activity.id}
+                  loading={target === activity.id && submitting}
+                  name={activity.id}
                   content="Delete"
                   color="red"
                   onClick={(event) => deleteActivity(event, activity.id)}
@@ -55,3 +53,5 @@ export const ActivityList: React.FC<IProps> = ({
     </Segment>
   );
 };
+
+export default observer(ActivityList);
