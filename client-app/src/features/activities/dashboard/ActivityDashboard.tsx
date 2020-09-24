@@ -1,30 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Grid } from "semantic-ui-react";
-import { IActivity } from "../../../app/models/activity";
 import ActivityList from "./ActivityList";
-import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
 import { observer } from "mobx-react-lite";
-import ActivityStore from "../../../app/stores/activityStore";
 
 const ActivityDashboard: React.FC = () => {
-  const activityStore = useContext(ActivityStore);
-  const { editMode, selectedActivity } = activityStore;
   return (
     <Grid>
       <Grid.Column width={10}>
         <ActivityList />
       </Grid.Column>
       <Grid.Column width={6}>
-        {console.log(selectedActivity)}
-        {console.log(editMode)}
-        {selectedActivity && !editMode && <ActivityDetails />}
-        {editMode && (
-          <ActivityForm
-            key={selectedActivity?.id || 0}
-            activity={selectedActivity!}
-          />
-        )}
+        <h2>Activity Filter</h2>
       </Grid.Column>
     </Grid>
   );
