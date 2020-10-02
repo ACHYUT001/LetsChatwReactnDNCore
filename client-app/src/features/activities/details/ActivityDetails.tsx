@@ -34,9 +34,9 @@ export const ActivityDetails: React.FC<RouteComponentProps<DetailProps>> = ({
   }, [loadActivity, match.params.id]);
 
   console.log(loadingInitial);
-  if (loadingInitial || !activity)
+  if (loadingInitial)
     return <LoadingComponent content="Loading activity...." />;
-
+  if (!activity) return <h2>Not Found</h2>;
   return (
     <Grid>
       <Grid.Column width={10}>
