@@ -4,6 +4,7 @@ using Domain;
 using MediatR;
 using Persistence;
 using System;
+using FluentValidation;
 
 namespace Application.Activities
 {
@@ -20,6 +21,18 @@ namespace Application.Activities
             public string Venue { get; set; }
         }
 
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Title).NotEmpty();
+                RuleFor(x => x.Description).NotEmpty();
+                RuleFor(x => x.Category).NotEmpty();
+                RuleFor(x => x.Date).NotEmpty();
+                RuleFor(x => x.City).NotEmpty();
+                RuleFor(x => x.Venue).NotEmpty();
+            }
+        }
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
@@ -39,21 +52,21 @@ namespace Application.Activities
                     Category = request.Category,
                     Date = request.Date,
                     City = request.City,
-                    Venue= request.Venue
+                    Venue = request.Venue
                 };
 
                 _context.Activities.Add(activity);
 
                 var success = await _context.SaveChangesAsync() > 0;
 
-                if(success) return Unit.Value;
+                if (success) return Unit.Value;
 
                 throw new Exception("Problem Saving Changes");
 
 
             }
 
-            
+
         }
     }
 }
