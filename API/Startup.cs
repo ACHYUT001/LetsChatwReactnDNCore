@@ -1,20 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using API.Middleware;
 using Application.Activities;
+using Application.Interfaces;
+using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
 namespace API
@@ -31,7 +40,13 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddFluentValidation(cfg =>
+            services.AddControllers(options =>
+            {
+                //build a new  policy
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                //makes sure to add the policy filter to the MVC Filters
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).AddFluentValidation(cfg =>
             {
                 cfg.RegisterValidatorsFromAssemblyContaining<Create>();
             });
@@ -49,11 +64,44 @@ namespace API
             });
 
             services.AddMediatR(typeof(List.Handler).Assembly);
+
+            //Identity capability
+            var builder = services.AddIdentityCore<AppUser>();
+            var identitybuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identitybuilder.AddEntityFrameworkStores<DataContext>();
+            identitybuilder.AddSignInManager<SignInManager<AppUser>>();
+
+            //Authentication
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+
+                //to validate our token; our server will receive the token as a bearer and it will perform validation on these points
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
+
+            //add the service so that we can use DI
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
+
+            //add username accessor 
+            services.AddScoped<IUserAccessor, UserAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //ordering of middlewares are very important
+            //userouting and usecors should come first as they allow http request mathching with endpoint
+            //then auth should be done as we need to authenticate the user and authorize before executing the matched endpoint
+            //then mathched endpoints should be executed (controllers)
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
             if (env.IsDevelopment())
@@ -64,12 +112,17 @@ namespace API
 
             //app.UseHttpsRedirection();
 
+            //UseRouting matches request to a endpoint
             app.UseRouting();
 
-            app.UseAuthorization();
-
+            //enables cors policy
             app.UseCors("CorsPolicy");
 
+            //adds Auth
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            //executes the matched endpoint
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
