@@ -30,6 +30,7 @@ namespace Application.User
                 //Handler logic
                 var user = await _userManager.FindByNameAsync(_userAccessor.GetCurrentUsername());
 
+
                 return new User
                 {
                     DisplayName = user.DisplayName,

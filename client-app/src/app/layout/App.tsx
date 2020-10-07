@@ -6,7 +6,6 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 
 import LoadingComponent from "./LoadingComponent";
 
-import ActivityStore from "../stores/activityStore";
 import { observer } from "mobx-react-lite";
 import {
   Route,
@@ -19,20 +18,31 @@ import { ActivityForm } from "../../features/activities/form/ActivityForm";
 import { ActivityDetails } from "../../features/activities/details/ActivityDetails";
 import NotFound from "./NotFound";
 import { ToastContainer } from "react-toastify";
+import { RootStoreContext } from "../stores/rootStore";
+import LoginForm from "../../features/user/LoginForm";
+import ModalContainer from "../common/modals/ModalContainer";
 
 const App: FC<RouteComponentProps> = ({ location }) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContext);
+  const { getUser } = rootStore.userStore;
+  const { token, setAppLoaded, appLoaded } = rootStore.commonStore;
 
+  //this makes sure that if our app is rerun/renders and when the this store is re-initialized it checks if there is a valid token in the
+  //browser local storage and makes sure the token persists and the app is aware about it
   useEffect(() => {
-    console.log("activitystore changed");
-    activityStore.loadActivities();
-  }, [activityStore]);
+    if (token) {
+      getUser().finally(() => setAppLoaded());
+    } else {
+      setAppLoaded();
+    }
+  }, [token, getUser, setAppLoaded]);
 
-  if (activityStore.loadingInitial)
-    return <LoadingComponent content="loading..." />;
+  // if (activityStore.loadingInitial)
+  if (!appLoaded) return <LoadingComponent content="loading..." />;
 
   return (
     <Fragment>
+      <ModalContainer />
       <ToastContainer position="bottom-right" />
 
       <Route exact path="/" component={HomePage} />
@@ -50,6 +60,7 @@ const App: FC<RouteComponentProps> = ({ location }) => {
                   component={ActivityForm}
                 />
                 <Route path="/activities/:id" component={ActivityDetails} />
+                <Route path="/login" component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

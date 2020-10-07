@@ -2,9 +2,10 @@ import React, { useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
 import { v4 as uuid } from "uuid";
-import ActivityStore from "../../../app/stores/activityStore";
+
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 interface DetailParams {
   id: string;
@@ -15,7 +16,7 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   history,
   location,
 }) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     createActivity,
     editActivity,
@@ -24,7 +25,7 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     activity: initialFormState,
     loadActivity,
     clearActivity,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   const [activity, setActivity] = useState<IActivity>({
     id: "",
@@ -133,8 +134,8 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
             <Button
               floated="right"
               positive
-              type="submit"
               content="Cancel"
+              type="submit"
               onClick={() => closeOpenForm()}
             />
             <Button

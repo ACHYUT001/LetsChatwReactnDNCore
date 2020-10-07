@@ -5,7 +5,7 @@ import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { IActivity } from "../../../app/models/activity";
 
-import ActivityStore from "../../../app/stores/activityStore";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 import ActivityDetailedChat from "./ActivityDetailedChat";
 import ActivityDetailedHeader from "./ActivityDetailedHeader";
 import ActivityDetailedInfo from "./ActivityDetailedInfo";
@@ -19,8 +19,8 @@ export const ActivityDetails: React.FC<RouteComponentProps<DetailProps>> = ({
   match,
   history,
 }) => {
-  const activityStore = useContext(ActivityStore);
-  const { activity, loadingInitial, loadActivity } = activityStore;
+  const rootStore = useContext(RootStoreContext);
+  const { activity, loadingInitial, loadActivity } = rootStore.activityStore;
   console.log("opening card");
 
   const [activity1, setActivity1] = useState<Promise<IActivity | null>>();
