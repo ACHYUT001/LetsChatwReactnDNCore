@@ -16,6 +16,7 @@ namespace Infrastructure.Security
 
         public string GetCurrentUsername()
         {
+            //fetching the name from the token
             var username = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
             return username;
