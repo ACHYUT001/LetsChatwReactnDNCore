@@ -16,6 +16,7 @@ namespace Persistence
 
         public DbSet<Activity> Activities { get; set; }
 
+        public DbSet<UserActivity> UserActivities { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -26,6 +27,24 @@ namespace Persistence
                     new Value { Id = 2, Name = "Value 102" },
                     new Value { Id = 3, Name = "Value 103" }
                 );
+
+            //definining the primary key
+            builder.Entity<UserActivity>((x) =>
+                x.HasKey(ua => new { ua.AppUserId, ua.ActivityId }));
+
+            //defining the relationship
+            builder.Entity<UserActivity>()
+                .HasOne(ua => ua.AppUser)
+                .WithMany(au => au.UserActivities)
+                .HasForeignKey(ua => ua.AppUserId);
+
+            //note how we are using the Activity and AppUser Object defined in the UserActivity entity to make the connection
+            builder.Entity<UserActivity>()
+                .HasOne(ua => ua.Activity)
+                .WithMany(activity => activity.UserActivities)
+                .HasForeignKey(ua => ua.ActivityId);
+
+
         }
     }
 }
