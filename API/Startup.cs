@@ -53,6 +53,7 @@ namespace API
             });
             services.AddDbContext<DataContext>((options) =>
                {
+                   options.UseLazyLoadingProxies();
                    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
                }
             );
@@ -88,6 +89,20 @@ namespace API
                     ValidateIssuer = false
                 };
             });
+
+            //Authorization
+
+            //adding policy
+            services.AddAuthorization((options) =>
+            {
+                options.AddPolicy("IsActivityHost", policy =>
+                {
+                    policy.Requirements.Add(new IsHostRequirement());
+                });
+            });
+
+            //adding the policy handler
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
             //add the service so that we can use DI
             services.AddScoped<IJwtGenerator, JwtGenerator>();
