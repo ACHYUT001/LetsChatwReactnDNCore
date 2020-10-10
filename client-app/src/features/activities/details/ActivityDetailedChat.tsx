@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React, { Fragment } from "react";
 import { Segment, Header, Form, Button, Comment } from "semantic-ui-react";
 
@@ -30,7 +31,7 @@ const ActivityDetailedChat = () => {
           </Comment>
 
           <Comment>
-            <Comment.Avatar src="/assets/user.png" />
+            <Comment.Avatar src="/assets/stock_user.png" />
             <Comment.Content>
               <Comment.Author as="a">Joe Henderson</Comment.Author>
               <Comment.Metadata>
@@ -58,4 +59,4 @@ const ActivityDetailedChat = () => {
   );
 };
 
-export default ActivityDetailedChat;
+export default observer(ActivityDetailedChat);

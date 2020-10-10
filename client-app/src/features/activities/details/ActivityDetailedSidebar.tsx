@@ -1,61 +1,70 @@
+import { observable } from "mobx";
+import { observer } from "mobx-react-lite";
 import React, { Fragment } from "react";
-import { Segment, Header, Form, Button, Comment } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import {
+  Segment,
+  Header,
+  Form,
+  Button,
+  Comment,
+  Item,
+  Label,
+  List,
+  Image,
+} from "semantic-ui-react";
+import { IActivity, IAttendee } from "../../../app/models/activity";
 
-const ActivityDetailedSidebar = () => {
+interface IProps {
+  activity: IActivity;
+}
+
+const ActivityDetailedSidebar: React.FC<IProps> = ({ activity }) => {
   return (
     <Fragment>
       <Segment
         textAlign="center"
         attached="top"
+        secondary
         inverted
         color="teal"
         style={{ border: "none" }}
       >
-        <Header>Chat about this event</Header>
+        {activity.attendees.length}{" "}
+        {activity.attendees.length === 1 ? "Person" : "People"} going
       </Segment>
       <Segment attached>
-        <Comment.Group>
-          <Comment>
-            <Comment.Avatar src="/assets/stock_user.png" />
-            <Comment.Content>
-              <Comment.Author as="a">Matt</Comment.Author>
-              <Comment.Metadata>
-                <div>Today at 5:42PM</div>
-              </Comment.Metadata>
-              <Comment.Text>How artistic!</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
+        <List relaxed divided>
+          {activity.attendees.map((attendee) => (
+            <Item key={attendee.username} style={{ position: "relative" }}>
+              {attendee.isHost && (
+                <Label
+                  style={{ position: "absolute" }}
+                  color="orange"
+                  ribbon="right"
+                >
+                  Host
+                </Label>
+              )}
 
-          <Comment>
-            <Comment.Avatar src="/assets/stock_user.png" />
-            <Comment.Content>
-              <Comment.Author as="a">Joe Henderson</Comment.Author>
-              <Comment.Metadata>
-                <div>5 days ago</div>
-              </Comment.Metadata>
-              <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-
-          <Form reply>
-            <Form.TextArea />
-            <Button
-              content="Add Reply"
-              labelPosition="left"
-              icon="edit"
-              primary
-            />
-          </Form>
-        </Comment.Group>
+              <Image
+                size="mini"
+                src={attendee.image || "/assets/stock_user.png"}
+              />
+              <Item.Content verticalAlign="middle">
+                <Item.Header as="h3">
+                  <Link to={`/profile/${attendee.username}`}>
+                    {attendee.displayName}
+                  </Link>
+                </Item.Header>
+                <Item.Extra style={{ color: "orange" }}>Following</Item.Extra>
+              </Item.Content>
+            </Item>
+          ))}
+        </List>
       </Segment>
     </Fragment>
   );
 };
 
-export default ActivityDetailedSidebar;
+export default observer(ActivityDetailedSidebar);

@@ -1,7 +1,9 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
+import { scryRenderedComponentsWithType } from "react-dom/test-utils";
 import { RouteComponentProps } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
+import { sleep } from "../../../app/api/agent";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { IActivity } from "../../../app/models/activity";
 
@@ -23,20 +25,33 @@ export const ActivityDetails: React.FC<RouteComponentProps<DetailProps>> = ({
   const { activity, loadingInitial, loadActivity } = rootStore.activityStore;
   console.log("opening card");
 
-  const [activity1, setActivity1] = useState<Promise<IActivity | null>>();
+  const [activity1, setActivity1] = useState<IActivity | null>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(match.params.id);
-    console.log(activity);
+    console.log(match.params.id + "   #1");
+    console.log(activity + "   #2");
+    async function test() {
+      await loadActivity(match.params.id);
+      setActivity1(activity);
+      setLoading(loadingInitial);
+    }
 
-    setActivity1(loadActivity(match.params.id));
-    console.log(activity);
-  }, [loadActivity, match.params.id]);
+    test();
+    // loadActivity(match.params.id);
+    // setActivity1(activity);
 
-  console.log(loadingInitial);
-  if (loadingInitial)
-    return <LoadingComponent content="Loading activity...." />;
-  if (!activity) return <h2>Not Found</h2>;
+    // setActivity1(loadActivity(match.params.id));
+    console.log(activity + " in use effect  #7");
+  }, [loadActivity, match.params.id, history]);
+
+  // sleep(1000);
+  // setLoading(false);
+  console.log(loadingInitial + " outside of use effect  #8");
+
+  if (loading) return <LoadingComponent content="Loading activity...." />;
+
+  if (!activity) return <h2>Loading...</h2>;
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -45,7 +60,7 @@ export const ActivityDetails: React.FC<RouteComponentProps<DetailProps>> = ({
         <ActivityDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailedSidebar />
+        <ActivityDetailedSidebar activity={activity} />
       </Grid.Column>
     </Grid>
   );

@@ -56,7 +56,7 @@ const App: FC<RouteComponentProps> = ({ location }) => {
                 <Route exact path="/activities" component={ActivityDashboard} />
                 <Route
                   key={location.key}
-                  path={["/createActivity", "/manage/:id"]}
+                  path={["/manage/:id", "/createActivity"]}
                   component={ActivityForm}
                 />
                 <Route path="/activities/:id" component={ActivityDetails} />

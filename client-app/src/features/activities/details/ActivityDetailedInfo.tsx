@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Segment, Grid, Icon } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
@@ -43,4 +44,4 @@ const ActivityDetailedInfo: React.FC<{ activity: IActivity }> = ({
   );
 };
 
-export default ActivityDetailedInfo;
+export default observer(ActivityDetailedInfo);

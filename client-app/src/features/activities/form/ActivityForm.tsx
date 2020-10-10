@@ -6,6 +6,7 @@ import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import { RootStoreContext } from "../../../app/stores/rootStore";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 interface DetailParams {
   id: string;
@@ -25,6 +26,7 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     activity: initialFormState,
     loadActivity,
     clearActivity,
+    loadingInitial,
   } = rootStore.activityStore;
 
   const [activity, setActivity] = useState<IActivity>({
@@ -35,17 +37,32 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     date: "",
     city: "",
     venue: "",
+    attendees: [],
   });
 
-  const [activity1, setActivity1] = useState<Promise<IActivity | null>>();
+  const [loading, setLoading] = useState(false);
+
+  // const [activity1, setActivity1] = useState<Promise<IActivity | null>>();
+  const [activity1, setActivity1] = useState<IActivity>();
+  const [li, setLi] = useState<IActivity>();
 
   useEffect(() => {
-    console.log(match.params.id);
-    if (match.params.id && activity.id.length === 0) {
-      setActivity1(loadActivity(match.params.id));
+    async function test() {
+      await loadActivity(match.params.id);
       if (initialFormState) {
         setActivity(initialFormState);
+        setLoading(loadingInitial);
       }
+    }
+    console.log(match.params.id);
+    if (match.params.id && activity.id.length === 0) {
+      // loadActivity(match.params.id);
+      // // setActivity1(loadActivity(match.params.id));
+      // loadActivity(match.params.id);
+
+      test();
+
+      // setActivity(activity1);
 
       console.log(initialFormState);
     }
@@ -56,9 +73,16 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     loadActivity,
     clearActivity,
     match.params.id,
-    initialFormState,
     activity.id.length,
+    activity,
+    loading,
+    loadingInitial,
+    history,
   ]);
+
+  if (loading) return <LoadingComponent content="Loading activity...." />;
+
+  // if (!activity) return <h2>Loading...</h2>;
 
   const handleSubmit = () => {
     if (activity.id.length === 0) {
