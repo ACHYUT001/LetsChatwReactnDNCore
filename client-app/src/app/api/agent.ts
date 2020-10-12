@@ -77,7 +77,12 @@ const Activities = {
 };
 
 //Request for user object
-
+// const Profiles = {
+//   get: (username: string): Promise<IProfile> =>
+//     requests.get(`/profile/${username}`),
+//   updateProfile: (profile: Partial<IProfile>) =>
+//     requests.put("/profile", profile),
+// };
 const User = {
   current: (): Promise<IUser> => requests.get("/user"),
   login: (user: IUserFormValues): Promise<IUser> =>

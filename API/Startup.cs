@@ -9,6 +9,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,12 +52,16 @@ namespace API
             {
                 cfg.RegisterValidatorsFromAssemblyContaining<Create>();
             });
+
+
             services.AddDbContext<DataContext>((options) =>
                {
                    options.UseLazyLoadingProxies();
                    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
                }
             );
+
+
             services.AddCors((options) =>
             {
                 options.AddPolicy("CorsPolicy", policy =>
@@ -65,14 +70,17 @@ namespace API
                 });
             });
 
+
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(List.Handler));
+
 
             //Identity capability
             var builder = services.AddIdentityCore<AppUser>();
             var identitybuilder = new IdentityBuilder(builder.UserType, builder.Services);
             identitybuilder.AddEntityFrameworkStores<DataContext>();
             identitybuilder.AddSignInManager<SignInManager<AppUser>>();
+
 
             //Authentication
 
@@ -101,14 +109,21 @@ namespace API
                 });
             });
 
+
             //adding the policy handler
             services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
-            //add the service so that we can use DI
+            //add the service so that we can inject JwtGenerator
             services.AddScoped<IJwtGenerator, JwtGenerator>();
 
             //add username accessor 
             services.AddScoped<IUserAccessor, UserAccessor>();
+
+            //Blob photo storage
+            services.Configure<AzureBlobSettings>(Configuration.GetSection("Azure"));
+
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
