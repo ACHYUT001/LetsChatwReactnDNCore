@@ -41,9 +41,9 @@ namespace Application.UserProfile
                     {
                         DisplayName = user.DisplayName,
                         Username = user.UserName,
-                        Image = null,
+                        Image = user.Photos.FirstOrDefault(x => x.IsMain)?.URL,
                         Bio = user.Bio,
-                        Images = new string[] { }
+                        Images = user.Photos
                     };
                 }
 

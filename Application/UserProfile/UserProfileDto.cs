@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Domain;
+
 namespace Application.UserProfile
 {
     public class UserProfileDto
@@ -8,6 +11,6 @@ namespace Application.UserProfile
 
         public string Bio { get; set; }
 
-        public string[] Images { get; set; }
+        public ICollection<Photo> Images { get; set; }
     }
 }
