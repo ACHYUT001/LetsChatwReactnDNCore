@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using API.Middleware;
+using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
 using AutoMapper;
@@ -96,6 +97,22 @@ namespace API
                     ValidateAudience = false,
                     ValidateIssuer = false
                 };
+
+                opt.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+
+                    }
+                };
             });
 
             //Authorization
@@ -108,6 +125,10 @@ namespace API
                     policy.Requirements.Add(new IsHostRequirement());
                 });
             });
+
+
+            //Adding SignalR
+            services.AddSignalR();
 
 
             //adding the policy handler
@@ -123,6 +144,8 @@ namespace API
             services.Configure<AzureBlobSettings>(Configuration.GetSection("Azure"));
 
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+
+
 
         }
 
@@ -157,7 +180,10 @@ namespace API
             //executes the matched endpoint
             app.UseEndpoints(endpoints =>
             {
+                //maps requests based on controllers
                 endpoints.MapControllers();
+                //whenever a request comes in for /chat endpoint it gets directed to the ChatHub
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }
