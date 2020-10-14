@@ -21,10 +21,11 @@ import { ToastContainer } from "react-toastify";
 import { RootStoreContext } from "../stores/rootStore";
 import LoginForm from "../../features/user/LoginForm";
 import ModalContainer from "../common/modals/ModalContainer";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 const App: FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
-  const { getUser } = rootStore.userStore;
+  const { getUser, user } = rootStore.userStore;
   const { token, setAppLoaded, appLoaded } = rootStore.commonStore;
 
   //this makes sure that if our app is rerun/renders and when the this store is re-initialized it checks if there is a valid token in the
@@ -60,7 +61,10 @@ const App: FC<RouteComponentProps> = ({ location }) => {
                   component={ActivityForm}
                 />
                 <Route path="/activities/:id" component={ActivityDetails} />
+
                 <Route path="/login" component={LoginForm} />
+
+                <Route path="/profile/:username" component={ProfilePage} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

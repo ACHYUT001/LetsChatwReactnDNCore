@@ -36,7 +36,13 @@ namespace Application.Photos
                 //handler logic 
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername());
 
-                var photo = user.Photos.SingleOrDefault(x => x.Id == request.Id);
+                var photo = user.Photos.FirstOrDefault(x => x.Id == request.Id);
+
+                if (photo == null)
+                {
+                    throw new RestException(System.Net.HttpStatusCode.NotFound, new { Photo = "Not Found!" });
+                }
+
                 if (photo.IsMain)
                 {
                     throw new RestException(System.Net.HttpStatusCode.BadRequest, new { Photos = "Cannot delete main photo" });
@@ -44,18 +50,21 @@ namespace Application.Photos
 
                 var result = await _photoAccessor.DeletePhoto(request.Id, user.UserName);
 
-                if (result == true)
-                {
-                    user.Photos.Remove(photo);
-                    var success = await _context.SaveChangesAsync() > 0;
 
-                    if (success) return Unit.Value;
+                if (result == false)
+                {
+                    throw new Exception("Problem Deleting Photos, not found");
                 }
 
 
 
+                user.Photos.Remove(photo);
 
-                throw new Exception("Problem Deleting Photos, not found");
+                var success = await _context.SaveChangesAsync() > 0;
+
+                if (success) return Unit.Value;
+
+                throw new Exception("Problem saving changes");
 
 
             }

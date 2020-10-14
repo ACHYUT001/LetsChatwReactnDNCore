@@ -34,7 +34,7 @@ namespace Application.UserProfile
             {
                 //Handler logic
 
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername());
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == request.UserName);
                 if (user != null)
                 {
                     return new UserProfileDto

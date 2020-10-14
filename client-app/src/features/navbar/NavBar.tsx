@@ -1,13 +1,16 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Menu, Container, Button, Dropdown, Image } from "semantic-ui-react";
 import "../../app/layout/style.css";
+import { IUser } from "../../app/models/user";
 import { RootStoreContext } from "../../app/stores/rootStore";
 
-export const NavBar: React.FC = () => {
+export const NavBar = () => {
   const rootStore = useContext(RootStoreContext);
-  const { user, logout } = rootStore.userStore;
+  const { logout, user } = rootStore.userStore;
+  const { profile } = rootStore.profileStore;
+  const [userState, setUserState] = useState<IUser | null>(user);
 
   return (
     <Menu inverted fixed="top" className=".ui.inveted.top.fixed.menu">
@@ -41,7 +44,7 @@ export const NavBar: React.FC = () => {
               <Dropdown.Menu>
                 <Dropdown.Item
                   as={Link}
-                  to={`/profile/username`}
+                  to={`/profile/${user.username}`}
                   text="My profile"
                   icon="user"
                 />

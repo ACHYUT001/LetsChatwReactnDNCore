@@ -7,6 +7,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Persistence;
 
 namespace Infrastructure.Photos
 {
@@ -16,9 +17,11 @@ namespace Infrastructure.Photos
         private readonly string _connectionString;
 
         private BlobServiceClient _blobServiceClient;
+        private readonly DataContext _context;
 
         public PhotoAccessor(IConfiguration configuration)
         {
+
 
             _connectionString = configuration["Azure:PhotosBlobCS"];
             _blobServiceClient = new BlobServiceClient(_connectionString);
@@ -67,6 +70,8 @@ namespace Infrastructure.Photos
         {
             //get access to the container 
             var containerClient = _blobServiceClient.GetBlobContainerClient($"{containerName.ToLower()}");
+
+
 
             return await containerClient.DeleteBlobIfExistsAsync(name);
 
