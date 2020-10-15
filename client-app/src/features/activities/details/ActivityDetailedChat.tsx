@@ -5,6 +5,7 @@ import { RootStoreContext } from "../../../app/stores/rootStore";
 import { Form as FinalForm, Field } from "react-final-form";
 import { Link } from "react-router-dom";
 import TextInput from "../../../app/common/form/TextInput";
+import { format, formatDistance } from "date-fns";
 
 const ActivityDetailedChat = () => {
   const rootStore = useContext(RootStoreContext);
@@ -16,11 +17,11 @@ const ActivityDetailedChat = () => {
   } = rootStore.activityStore;
 
   useEffect(() => {
-    createHubConnection();
+    createHubConnection(activity!.id);
     return () => {
       stopHubConnection();
     };
-  }, [createHubConnection, stopHubConnection]);
+  }, [createHubConnection, stopHubConnection, activity]);
   return (
     <Fragment>
       <Segment
@@ -46,7 +47,19 @@ const ActivityDetailedChat = () => {
                     {comment.displayName}
                   </Comment.Author>
                   <Comment.Metadata>
-                    <div>{comment.createdAt}</div>
+                    {console.log(comment.createdAt)}
+                    {console.log("next")}
+                    {console.log(
+                      format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
+                    )}
+                    <div>
+                      {formatDistance(
+                        Date.parse(`${comment.createdAt}`),
+                        Date.parse(
+                          format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
+                        )
+                      )}
+                    </div>
                   </Comment.Metadata>
                   <Comment.Text>{comment.body}</Comment.Text>
                 </Comment.Content>

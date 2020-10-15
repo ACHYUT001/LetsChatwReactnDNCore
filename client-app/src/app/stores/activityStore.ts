@@ -27,7 +27,11 @@ export default class ActivityStore {
   @observable loading = false;
   @observable.ref hubConnection: HubConnection | null = null;
 
-  @action createHubConnection = () => {
+  delay = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  @action createHubConnection = async (activityId: string) => {
     //building a hub connection
     this.hubConnection = new HubConnectionBuilder()
       .withUrl("http://localhost:5000/chat", {
@@ -36,10 +40,16 @@ export default class ActivityStore {
       .configureLogging(LogLevel.Information)
       .build();
 
+    await this.delay(300);
+
     //start the connection
     this.hubConnection
       .start()
       .then(() => console.log(this.hubConnection!.state))
+      .then(() => {
+        console.log("Attempting to join group");
+        this.hubConnection!.invoke("AddToGroup", activityId);
+      })
       .catch((error) => console.log("Error establishing connection:", error));
 
     //what to do when we receive a message is received, "ReceiveComment" is a method, this is a handler which is like the definition of the method
@@ -49,11 +59,20 @@ export default class ActivityStore {
         this.activity!.comments.push(comment);
       });
     });
+
+    this.hubConnection.on("Send", (message) => {
+      toast.info(message);
+    });
   };
 
   //to stop the hub connection
   @action stopHubConnection = () => {
-    this.hubConnection!.stop();
+    this.hubConnection!.invoke("RemoveFromGroup", this.activity!.id)
+      .then(() => {
+        this.hubConnection!.stop();
+      })
+      .then(() => console.log("Connection has stopped"))
+      .catch((error) => console.log(error));
   };
 
   @action addComment = async (values: any) => {
