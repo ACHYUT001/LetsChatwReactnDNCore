@@ -27,6 +27,45 @@ export default class ActivityStore {
   @observable loading = false;
   @observable.ref hubConnection: HubConnection | null = null;
 
+  @action createHubConnection = () => {
+    //building a hub connection
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chat", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    //start the connection
+    this.hubConnection
+      .start()
+      .then(() => console.log(this.hubConnection!.state))
+      .catch((error) => console.log("Error establishing connection:", error));
+
+    //what to do when we receive a message is received, "ReceiveComment" is a method, this is a handler which is like the definition of the method
+    //this describes what to do when the method is invoked ie message is sent :)
+    this.hubConnection.on("ReceiveComment", (comment) => {
+      runInAction(() => {
+        this.activity!.comments.push(comment);
+      });
+    });
+  };
+
+  //to stop the hub connection
+  @action stopHubConnection = () => {
+    this.hubConnection!.stop();
+  };
+
+  @action addComment = async (values: any) => {
+    values.activityId = this.activity!.id;
+    try {
+      //invoking the SendCommnet method on the server from the client
+      await this.hubConnection!.invoke("SendComment", values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   @computed get activitiesByDate() {
     return this.groupActivities(Array.from(this.activityRegistry.values()));
   }
