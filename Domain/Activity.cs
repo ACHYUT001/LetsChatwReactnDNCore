@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Domain
 {
@@ -15,6 +16,7 @@ namespace Domain
 
         public virtual ICollection<UserActivity> UserActivities { get; set; }
 
+        // [JsonIgnore]
         public virtual ICollection<Comment> Comments { get; set; }
 
     }

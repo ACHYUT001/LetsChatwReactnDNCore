@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Application.Comments;
 using Domain;
 
 namespace Application.Activities
@@ -18,6 +19,7 @@ namespace Application.Activities
         [JsonPropertyName("attendees")]
         public ICollection<AttendeeDto> UserActivities { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
+        // [JsonIgnore]
+        public ICollection<CommentsDto> Comments { get; set; }
     }
 }
