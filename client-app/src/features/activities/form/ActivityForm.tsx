@@ -38,6 +38,7 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     city: "",
     venue: "",
     attendees: [],
+    comments: [],
   });
 
   const [loading, setLoading] = useState(false);
