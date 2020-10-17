@@ -7,6 +7,7 @@ using API.Middleware;
 using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
+using Application.UserProfile;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
@@ -145,6 +146,8 @@ namespace API
             services.Configure<AzureBlobSettings>(Configuration.GetSection("Azure"));
 
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+
+            services.AddScoped<IProfileReader, ProfileReader>();
 
 
 

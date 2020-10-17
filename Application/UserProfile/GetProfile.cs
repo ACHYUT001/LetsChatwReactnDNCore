@@ -19,38 +19,23 @@ namespace Application.UserProfile
         }
         public class Handler : IRequestHandler<Query, UserProfileDto>
         {
-            private readonly DataContext _context;
-            private readonly UserManager<AppUser> _userManager;
+
+
             private readonly IUserAccessor _userAccessor;
+            private readonly IProfileReader _profileReader;
 
-            public Handler(DataContext context, IUserAccessor userAccessor)
+            public Handler(IProfileReader profileReader)
             {
-                this._userAccessor = userAccessor;
+                this._profileReader = profileReader;
 
-                _context = context;
+
             }
 
             public async Task<UserProfileDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 //Handler logic
 
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == request.UserName);
-                if (user != null)
-                {
-                    return new UserProfileDto
-                    {
-                        DisplayName = user.DisplayName,
-                        Username = user.UserName,
-                        Image = user.Photos.FirstOrDefault(x => x.IsMain)?.URL,
-                        Bio = user.Bio,
-                        Images = user.Photos
-                    };
-                }
-
-                throw new RestException(System.Net.HttpStatusCode.Unauthorized, new { User = "Not a registered user" });
-
-
-
+                return await _profileReader.ReadProfile(request.UserName);
             }
         }
     }

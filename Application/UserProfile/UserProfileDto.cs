@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Domain;
 
 namespace Application.UserProfile
@@ -10,6 +11,13 @@ namespace Application.UserProfile
         public string Image { get; set; }
 
         public string Bio { get; set; }
+
+        [JsonPropertyName("following")]
+        public bool IsFollowed { get; set; }
+
+        public int FollowerCount { get; set; }
+
+        public int FollowingCount { get; set; }
 
         public ICollection<Photo> Images { get; set; }
     }
