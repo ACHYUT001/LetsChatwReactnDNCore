@@ -4,7 +4,7 @@ import { request } from "http";
 import { toast } from "react-toastify";
 import { history } from "../..";
 
-import { IActivity } from "../models/activity";
+import { IActivity, IActivityEnvelope } from "../models/activity";
 import { IPhoto, IProfile } from "../models/profile";
 import { IUser, IUserFormValues } from "../models/user";
 
@@ -77,7 +77,10 @@ const requests = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => requests.get("/activities"),
+  list: (limit?: number, page?: number): Promise<IActivityEnvelope> =>
+    requests.get(
+      `/activities?limit=${limit}&offset=${page ? page * limit! : 0}`
+    ),
   detail: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
