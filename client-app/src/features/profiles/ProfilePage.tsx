@@ -1,10 +1,9 @@
-import { cleanup } from "@testing-library/react";
-import { observer, Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-import { RootStore, RootStoreContext } from "../../app/stores/rootStore";
+import { RootStoreContext } from "../../app/stores/rootStore";
 import ProfileContent from "./ProfileContent";
 import ProfileHeader from "./ProfileHeader";
 

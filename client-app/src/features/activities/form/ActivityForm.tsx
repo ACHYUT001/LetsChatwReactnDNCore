@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { format } from "date-fns";
 
 interface DetailParams {
   id: string;
@@ -144,6 +145,7 @@ export const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
               value={activity.date}
               onChange={handleInputChange}
             />
+            {console.log(format(activity.date, "MM-dd-yyyy HH:mm ss"))}
             <Form.Input
               name="city"
               placeholder="City"

@@ -1,19 +1,8 @@
-import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import {
-  Segment,
-  Header,
-  Form,
-  Button,
-  Comment,
-  Item,
-  Label,
-  List,
-  Image,
-} from "semantic-ui-react";
-import { IActivity, IAttendee } from "../../../app/models/activity";
+import { Segment, Item, Label, List, Image } from "semantic-ui-react";
+import { IActivity } from "../../../app/models/activity";
 
 interface IProps {
   activity: IActivity;

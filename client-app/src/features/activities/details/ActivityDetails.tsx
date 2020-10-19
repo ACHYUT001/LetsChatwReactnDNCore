@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
-import { scryRenderedComponentsWithType } from "react-dom/test-utils";
+
 import { RouteComponentProps } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
-import { sleep } from "../../../app/api/agent";
+
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { IActivity } from "../../../app/models/activity";
 

@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { request } from "http";
 
 import { toast } from "react-toastify";
 import { history } from "../..";
@@ -77,10 +76,11 @@ const requests = {
 };
 
 const Activities = {
-  list: (limit?: number, page?: number): Promise<IActivityEnvelope> =>
-    requests.get(
-      `/activities?limit=${limit}&offset=${page ? page * limit! : 0}`
-    ),
+  list: (params: URLSearchParams): Promise<IActivityEnvelope> =>
+    axios
+      .get("/activities", { params: params })
+      .then(sleep(1000))
+      .then(responseBody),
   detail: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
@@ -119,6 +119,8 @@ const Profiles = {
   unfollow: (username: string) => requests.del(`/profile/${username}/follow`),
   listFollowings: (username: string, predicate: string) =>
     requests.get(`/profile/${username}/follow?predicate=${predicate}`),
+  listActivities: (username: string, predicate: string) =>
+    requests.get(`/profile/${username}/activities?predicate=${predicate}`),
 };
 
 export default {

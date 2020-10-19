@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import { Button, Form, Input } from "semantic-ui-react";
+import React from "react";
+import { Button, Form } from "semantic-ui-react";
 import { IProfile } from "../../app/models/profile";
 import { Form as FinalForm, Field } from "react-final-form";
 import { combineValidators, isRequired } from "revalidate";

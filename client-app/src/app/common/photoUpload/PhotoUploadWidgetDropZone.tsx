@@ -1,9 +1,7 @@
-import { url } from "inspector";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { objectValues } from "react-toastify/dist/utils";
+
 import { Header, Icon } from "semantic-ui-react";
-import PhotoUploadWidget from "./PhotoUploadWidget";
 
 interface IProps {
   setFiles: (files: object[]) => void;
@@ -23,16 +21,19 @@ const dropzoneActive = {
 };
 
 const PhotoUploadWidgetDropZone: React.FC<IProps> = ({ setFiles }) => {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-    setFiles(
-      acceptedFiles.map((file: object) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      )
-    );
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      // Do something with the files
+      setFiles(
+        acceptedFiles.map((file: object) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+    [setFiles]
+  );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
@@ -45,11 +46,6 @@ const PhotoUploadWidgetDropZone: React.FC<IProps> = ({ setFiles }) => {
       <input {...getInputProps()} />
       <Icon name="upload" size="huge" />
       <Header content="Drop Image here" />
-      {/* {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      )} */}
     </div>
   );
 };

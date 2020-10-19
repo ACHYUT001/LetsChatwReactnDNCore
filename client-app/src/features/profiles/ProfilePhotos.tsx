@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite";
 import React, { useContext, useState } from "react";
 import { Card, Header, Tab, Image, Button, Grid } from "semantic-ui-react";
 import PhotoUploadWidget from "../../app/common/photoUpload/PhotoUploadWidget";
-import LoadingComponent from "../../app/layout/LoadingComponent";
-import { RootStore, RootStoreContext } from "../../app/stores/rootStore";
+
+import { RootStoreContext } from "../../app/stores/rootStore";
 
 const ProfilePhotos = () => {
   const rootStore = useContext(RootStoreContext);

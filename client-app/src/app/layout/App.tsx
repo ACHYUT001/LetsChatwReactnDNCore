@@ -25,7 +25,7 @@ import ProfilePage from "../../features/profiles/ProfilePage";
 
 const App: FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
-  const { getUser, user } = rootStore.userStore;
+  const { getUser } = rootStore.userStore;
   const { token, setAppLoaded, appLoaded } = rootStore.commonStore;
 
   //this makes sure that if our app is rerun/renders and when the this store is re-initialized it checks if there is a valid token in the
