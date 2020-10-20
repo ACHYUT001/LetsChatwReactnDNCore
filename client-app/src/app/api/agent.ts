@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { stat } from "fs";
 
 import { toast } from "react-toastify";
 import { history } from "../..";
@@ -16,10 +17,20 @@ axios.interceptors.response.use(undefined, (error) => {
     toast.error("Network Error - make sure api is running :D");
   }
 
-  const { status, data, config } = error.response;
+  const { status, data, config, headers } = error.response;
 
   if (status === 404) {
     history.push("/notfound");
+  }
+
+  if (
+    status === 401 &&
+    headers["www-authenticate"].split(",")[0] === `Bearer error="invalid_token"`
+  ) {
+    console.log(error.response);
+    window.localStorage.removeItem("jwt");
+    history.push("/");
+    toast.info("Session expired, please login again");
   }
 
   if (
