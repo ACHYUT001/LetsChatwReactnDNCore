@@ -179,6 +179,11 @@ namespace API
 
             //app.UseHttpsRedirection();
 
+
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
+
             //UseRouting matches request to a endpoint
             app.UseRouting();
 
@@ -196,6 +201,9 @@ namespace API
                 endpoints.MapControllers();
                 //whenever a request comes in for /chat endpoint it gets directed to the ChatHub
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
+
+                // endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
