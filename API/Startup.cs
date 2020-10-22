@@ -176,6 +176,44 @@ namespace API
                 // app.UseDeveloperExceptionPage();
 
             }
+            else
+            {
+                app.UseHsts();
+            }
+
+            //Middleware for security headers
+            //Prevent Content Sniffing
+            app.UseXContentTypeOptions();
+
+            //Restricts the amount of info passed to other sites when referring to other sites
+            app.UseReferrerPolicy(options => options.NoReferrer());
+
+            //stops pages from loading when they detected reflected cross-site scripting attacks
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+
+            //prevents click jacking attacks, blocks Iframe
+            app.UseXfo(options => options.Deny());
+
+
+            app.UseCsp(options => options
+            //prevents loading any assest using http, when the page is loaded using https
+            .BlockAllMixedContent()
+
+            .StyleSources(source => source.Self().CustomSources("https://fonts.googleapis.com", "sha256-ehIZssCI9aFwLKilYPBVNPepuv/8QZCaoUnZVz4zepg="))
+            .FontSources(source => source.Self().CustomSources("https://fonts.gstatic.com/", "data:"))
+            .FormActions(source => source.Self())
+            .FrameAncestors(source => source.Self())
+            .ImageSources(source => source.Self().CustomSources("https://letschatsa.blob.core.windows.net", "blob:", "data:"))
+            .ScriptSources(source => source.Self().CustomSources("sha256-ma5XxS1EBgt17N22Qq31rOxxRWRfzUTQS1KOtfYwuNo="))
+            );
+
+
+
+
+
+
+
+
 
             //app.UseHttpsRedirection();
 
