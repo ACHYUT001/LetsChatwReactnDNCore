@@ -156,14 +156,20 @@ export default class ActivityStore {
     try {
       const activitiesEnvelope = await agent.Activities.list(this.axiosParams);
       const { activities, activityCount } = activitiesEnvelope;
+      console.log(activities);
+      console.log(activityCount);
 
       runInAction("loading activities", () => {
-        activities.forEach((activity) => {
-          // activity.date = activity.date.split(".")[0];
-          setActivityProps(activity, this.rootStore.userStore.user!);
-          this.activityRegistry.set(activity.id, activity);
-          this.activityCount = activityCount;
-        });
+        activityCount === 0
+          ? (this.activityCount = 0)
+          : activities.forEach((activity) => {
+              // activity.date = activity.date.split(".")[0];
+              setActivityProps(activity, this.rootStore.userStore.user!);
+              this.activityRegistry.set(activity.id, activity);
+              this.activityCount = activityCount;
+              console.log("running for each");
+              console.log(activityCount);
+            });
         this.loadingInitial = false;
       });
     } catch (error) {

@@ -7,6 +7,7 @@ import { RootStoreContext } from "../../../app/stores/rootStore";
 import InfiniteScroll from "react-infinite-scroller";
 import ActivityFilters from "./ActivityFilters";
 import ActivityListItemPlaceholder from "./ActivityListItemPlaceholder";
+import { toast } from "react-toastify";
 
 const ActivityDashboard: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
@@ -16,6 +17,7 @@ const ActivityDashboard: React.FC = () => {
     setPage,
     page,
     totalPages,
+    activityCount,
   } = rootStore.activityStore;
   const [loadingNext, setLoadingNext] = useState(false);
 
@@ -35,22 +37,27 @@ const ActivityDashboard: React.FC = () => {
       <Grid.Column width={10}>
         {loadingInitial && page === 0 ? (
           <ActivityListItemPlaceholder />
-        ) : (
+        ) : activityCount > 0 ? (
           <InfiniteScroll
             pageStart={0}
             loadMore={handleGetNext}
-            hasMore={!loadingNext && page + 1 < totalPages}
+            hasMore={
+              !loadingNext &&
+              (page + 1 < totalPages ? !loadingNext : loadingNext)
+            }
             initialLoad={false}
           >
             <ActivityList />
           </InfiniteScroll>
+        ) : (
+          <h4>No Activities Found 😔</h4>
         )}
       </Grid.Column>
       <Grid.Column width={6}>
         <ActivityFilters />
       </Grid.Column>
       <Grid.Column width={10}>
-        <Loader active={loadingNext} />
+        {page + 1 < totalPages && <Loader active={loadingNext} />}
       </Grid.Column>
     </Grid>
   );
